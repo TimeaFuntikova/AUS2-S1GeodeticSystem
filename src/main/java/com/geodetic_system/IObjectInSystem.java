@@ -9,4 +9,5 @@ public interface IObjectInSystem <T extends IObjectInSystem<?>> {
     GPSPosition getBottomRight();
     List<T> getRelatedObjects(); // vrati zoznam pripojenych objektov
     void addRelatedObject(T obj); // prida objekt do zoznamu pripojenych objektov
+    int compareByID(Object instance, Object other);
 }

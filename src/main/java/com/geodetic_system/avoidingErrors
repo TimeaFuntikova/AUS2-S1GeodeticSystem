@@ -1,0 +1,52 @@
+--caste chyby - postup a pomocky na jednoznacne odhalenie chyby
+- strata prvkov v udajovej strukture
+- zle nastavenie smernikov
+- trace typ chyby -> reprodukcia chyby, situacia - chyba opakovane a maly pocet prvkov
+
+--chyba kdekolvek, kedykolvek a pri hocakom scenari a pocte opakovani
+
+
+--TESTOVANIE:
+-----------------
+-urobit tester
+-generator operacii - aj otestovanie
+testovaia trieda a nahodne aplikuje operacie insert/find/delete - nahodne poradie a nahodne kluce, 20 mil op
+-odladena az ked to prejde
+--while -> for (random a id(30% insert, 30% find, 30% delete))
+--1.) oscilacia okolo prazdnej struktury () (jeden z testov)
+--------------------------------------------------------------
+--na velkom mnozstve dat (narast struktury, viac insertov)
+--kluc int na testovanie (celociselne hodnoty) - nahodne cez instanciu random (nextInt)
+--mazanie - nahodne kluc a vymazem - nemusi sediet s klucom pr inserte
+--> vymazem kluc, ktory tam nie je a nie ten ktory sa vlozil -->
+--> potrebujem vymazavat tie, ktore som vlozil - ked vymazem kluc kt nie je - vacsinou sa nenajde -ok
+pomocny arraylist - nahodny index z rozsahu arraylistu a vymazem ho odtial aj zo struktury
+array list = pomocka na odladenie struktury - ok
+--hladanie aj na tom co sa nachadza aj to co sa nenachadza
+2.) aj bobtnanie struktury
+--------------------------------------------------------------
+-access violation
+-zamrznutie programu
+instancia triedy random - seed - rovnaky seed - rovnake operacie - rovnake vysledky (vytiahnut cislo z rozsahu)
+-ak chcem rovnake vysledky - rovnaky seed da sa nastavit fixne - identicke operacie a vysledky lahsi debug
+
+-for (nasada 0; nasada < 3; nasada++) - 3 nasady a pocet prvkov 9 ->
+najsta taku nasadu kde sa to prejavi pri malom pocte prvkov
+
+-strata prvkov v strukture - 1. kontrola poctu (prejdem strukturu prehliadkov a ci sedi pocet prvkov)
+-arraylist - usporiadat v arrayliste ci sedi, pri duplicitach ci sa skutocne prejavuju
+-arraylist podporuje duplikaty - ale BVS nie
+
+--nastroje na testovanie:
+kompilator
+krokovanie (debug nastroje)
+podmienka - breakpoint po nejakom x-raze
+sledovanie obsahu premennych - hodnoty premennych
++ profiler - sledovanie casovej narocnosti - meranie vykonnosti aplikacie
+(ktore metody zaberaju vykon || triedy)
+
+
+
+
+
+

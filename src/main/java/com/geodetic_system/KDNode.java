@@ -1,6 +1,5 @@
 package com.geodetic_system;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class KDNode {
@@ -12,13 +11,12 @@ public class KDNode {
     private KDNode right;
     private KDNode parent;
 
-    public KDNode(GPSPosition position, IObjectInSystem<?> data) {
-        this.position = position;
+    public KDNode(IObjectInSystem<?> data) {
+        this.position = data.getTopLeft(); //sa bude vkladat podla top left pozicie
         this.data = data;
         this.left = null;
         this.right = null;
         this.parent = null;
-        log.setLevel(Level.FINE);  // Set the log level to FINE to capture detailed logs
         log.fine("Created new node with position: " + position.toString());
     }
 

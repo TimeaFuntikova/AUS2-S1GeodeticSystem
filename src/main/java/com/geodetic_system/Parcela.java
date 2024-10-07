@@ -42,14 +42,19 @@ public class Parcela implements IObjectInSystem<Property> {
         return bottomRight;
     }
 
+    //len nehnutelnosti
     @Override
     public List<Property> getRelatedObjects() {
         return relatedObjects;
     }
 
-    //len nehnutelnosti
     @Override
     public void addRelatedObject(Property obj) {
         relatedObjects.add(obj);
+    }
+
+    @Override
+    public int compareByID(Object instance, Object other) {
+        return Integer.compare(this.getId(), ((Parcela) other).getId());
     }
 }

@@ -42,14 +42,19 @@ public class Property implements IObjectInSystem<Parcela> {
         return bottomRight;
     }
 
+    //len parcely
     @Override
     public List<Parcela> getRelatedObjects() {
         return relatedObjects;
     }
 
-    //len parcely
     @Override
     public void addRelatedObject(Parcela obj) {
         relatedObjects.add(obj);
+    }
+
+    @Override
+    public int compareByID(Object instance, Object other) {
+        return Integer.compare(this.getId(), ((Property) other).getId());
     }
 }
