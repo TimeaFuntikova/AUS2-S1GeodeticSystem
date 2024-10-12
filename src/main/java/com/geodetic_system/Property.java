@@ -7,7 +7,7 @@ import java.util.List;
  * Trieda 'Nehnutelnost' ma svoje unikatne supisne cislo, popis, GPS pozicie, ktore definuju
  * jej ohranicenie a zoznam parciel, na ktorych nehnutelnost stoji.
  */
-public class Property implements IObjectInSystem<Parcela> {
+public class Property implements IObjectInSystem<Property, Parcela> {
     private final int propertyNumber;
     private final String description;
     private final GPSPosition topLeft;
@@ -42,19 +42,19 @@ public class Property implements IObjectInSystem<Parcela> {
         return bottomRight;
     }
 
-    //len parcely
     @Override
     public List<Parcela> getRelatedObjects() {
-        return relatedObjects;
+        return relatedObjects; // Zoznam pripojených parciel
     }
 
     @Override
     public void addRelatedObject(Parcela obj) {
-        relatedObjects.add(obj);
+        relatedObjects.add(obj); // Pridanie parcely do zoznamu
     }
 
     @Override
-    public int compareByID(Object instance, Object other) {
-        return Integer.compare(this.getId(), ((Property) other).getId());
+    public int compareByID(Property other) {
+        return Integer.compare(this.getId(), other.getId()); // Porovnanie nehnuteľností podľa ID
     }
+
 }

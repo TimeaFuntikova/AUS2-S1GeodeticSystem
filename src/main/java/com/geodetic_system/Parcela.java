@@ -7,7 +7,7 @@ import java.util.List;
  * Trieda 'Parcela' ma svoje unikatne cislo, popis a zoznam nehnutelnosti, ktore sa na nej nachadzaju
  * a rovnako aj zoznam nehnutelnosti, ktore sa na danej parcele nachadzaju.
  */
-public class Parcela implements IObjectInSystem<Property> {
+public class Parcela implements IObjectInSystem<Parcela, Property> {
     private final int parcelaNumber;//(cislo parcely)
     private final String description;
     private final GPSPosition topLeft;
@@ -42,7 +42,7 @@ public class Parcela implements IObjectInSystem<Property> {
         return bottomRight;
     }
 
-    //len nehnutelnosti
+
     @Override
     public List<Property> getRelatedObjects() {
         return relatedObjects;
@@ -54,7 +54,7 @@ public class Parcela implements IObjectInSystem<Property> {
     }
 
     @Override
-    public int compareByID(Object instance, Object other) {
-        return Integer.compare(this.getId(), ((Parcela) other).getId());
+    public int compareByID(Parcela other) {
+        return Integer.compare(this.getId(), other.getId());
     }
 }

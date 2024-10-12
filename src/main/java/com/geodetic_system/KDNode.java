@@ -1,63 +1,42 @@
 package com.geodetic_system;
 
-import java.util.logging.Logger;
+public class KDNode<T extends IObjectInSystem<T, R>, R> {
 
-public class KDNode {
-    private final Logger log = Logger.getLogger(KDNode.class.getName());
+    private final T data;
+    private KDNode<T, R> left, right, parent;
 
-    private final GPSPosition position;
-    private final IObjectInSystem<?> data;
-    private KDNode left;
-    private KDNode right;
-    private KDNode parent;
-
-    public KDNode(IObjectInSystem<?> data) {
-        this.position = data.getTopLeft(); //sa bude vkladat podla top left pozicie
+    public KDNode(T data) {
         this.data = data;
         this.left = null;
         this.right = null;
         this.parent = null;
-        log.fine("Created new node with position: " + position.toString());
     }
 
-    public GPSPosition getPosition() {
-        return position;
-    }
-
-    public IObjectInSystem<?> getData() {
+    public T getData() {
         return data;
     }
 
-    public KDNode getLeft() {
+    public KDNode<T, R> getLeft() {
         return left;
     }
 
-    public void setLeft(KDNode left) {
+    public void setLeft(KDNode<T, R> left) {
         this.left = left;
-        if (left != null) {
-            left.parent = this;
-            log.fine("Set parent of left child to: " + this.position.toString());
-        }
     }
 
-    public KDNode getRight() {
+    public KDNode<T, R> getRight() {
         return right;
     }
 
-    public void setRight(KDNode right) {
+    public void setRight(KDNode<T, R> right) {
         this.right = right;
-        if (right != null) {
-            right.parent = this;
-            log.fine("Set parent of right child to: " + this.position.toString());
-        }
     }
 
-    public KDNode getParent() {
+    public KDNode<T, R> getParent() {
         return parent;
     }
 
-    public void setParent(KDNode parent) {
+    public void setParent(KDNode<T, R> parent) {
         this.parent = parent;
     }
-
 }
