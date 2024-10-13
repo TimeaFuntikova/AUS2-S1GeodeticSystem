@@ -10,6 +10,10 @@ public class KDTree<T extends IObjectInSystem<T, R>, R> {
         this.root = null;
     }
 
+    public KDNode<T, R> getRoot() {
+        return root;
+    }
+
     /**
      * Metóda, ktorá vracia v tomto prípade na prvej úrovni dimenzie zemepisnú šírku,
      * na druhej zemepisnú dĺžku získanú z objektu GPSPosition.
@@ -30,7 +34,6 @@ public class KDTree<T extends IObjectInSystem<T, R>, R> {
 
     //K1 - insert
     public void insert(T data, int POCET_DIMENZII) {
-        //je tu uzol, ktory sa bude vkladat do stromu ?
         if (data == null) {
             log.warning("Data to insert is null.");
             return;
