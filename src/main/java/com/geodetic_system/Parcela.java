@@ -1,24 +1,24 @@
 package com.geodetic_system;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 /**
  * Trieda 'Parcela' ma svoje unikatne cislo, popis a zoznam nehnutelnosti, ktore sa na nej nachadzaju
  * a rovnako aj zoznam nehnutelnosti, ktore sa na danej parcele nachadzaju.
  */
-public class Parcela implements IObjectInSystem<Parcela, Property> {
-    private final int parcelaNumber;//(cislo parcely)
+public class Parcela implements IObjectInSystem<Parcela> {
+    private final int parcelaNumber; //(cislo parcely)
     private final String description;
-    private final GPSPosition topLeft;
-    private final GPSPosition bottomRight;
+    private final GPSPosition gpsPosition; // pozicia parcely
     private final List<Property> relatedObjects; // bude obsahovat IBA nehnutelnosti (IObjectInSystem == Property)
+    private final MyComparator myComparator = new MyComparator();
 
-    public Parcela(int parcelaNumber, String description, GPSPosition topLeft, GPSPosition bottomRight) {
+    public Parcela(int parcelaNumber, String description, GPSPosition gpsPosition) {
         this.parcelaNumber = parcelaNumber;
         this.description = description;
-        this.topLeft = topLeft;
-        this.bottomRight = bottomRight;
+        this.gpsPosition = gpsPosition;
         this.relatedObjects = new ArrayList<>();
     }
 
@@ -33,28 +33,21 @@ public class Parcela implements IObjectInSystem<Parcela, Property> {
     }
 
     @Override
-    public GPSPosition getTopLeft() {
-        return topLeft;
+    public GPSPosition getGpsPosition() {
+        return gpsPosition;
     }
 
     @Override
-    public GPSPosition getBottomRight() {
-        return bottomRight;
+    public int compareByDimension(Parcela other, int POCET_DIMENZII, int depth) {
+        this.myComparator.setDepth(depth);
+        return this.myComparator.compare(this, other, POCET_DIMENZII);
     }
 
-
-    @Override
-    public List<Property> getRelatedObjects() {
-        return relatedObjects;
-    }
-
-    @Override
     public void addRelatedObject(Property obj) {
-        relatedObjects.add(obj);
+       this.relatedObjects.add(obj);
     }
 
-    @Override
-    public int compareByID(Parcela other) {
-        return Integer.compare(this.getId(), other.getId());
+    public List<Property> getRelatedProperties() {
+        return this.relatedObjects;
     }
 }
