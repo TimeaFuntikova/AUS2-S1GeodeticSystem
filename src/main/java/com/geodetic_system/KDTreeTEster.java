@@ -7,12 +7,14 @@ import java.util.Random;
 
 public class KDTreeTEster {
         private final Logger log = Logger.getLogger(KDTreeTEster.class.getName());
-        private KDTree<Parcela, Property> kdTreeParcela;
+        private KDTree<Parcela> kdTreeParcela;
         private List<Parcela> referenceList;
         private List<Property> referenceList2; // pomocny zoznam pre porovnanie
         private Random random;
+        private static int currentSupisneCislo = 100;
 
-        public KDTreeTEster(long seed) {
+
+    public KDTreeTEster(long seed) {
             this.kdTreeParcela = new KDTree<>();
             this.referenceList = new ArrayList<>();
             this.random = new Random(seed); //pre reprodukciu vysledkov je dany fixne
@@ -33,33 +35,42 @@ public class KDTreeTEster {
             }
         }
 
-        // Vkladanie náhodnej parcely
         private void insertRandomParcela() {
-            int id = random.nextInt(1000); // random id pre parcelu
-            GPSPosition topLeft = new GPSPosition('N', random.nextDouble() * 90, 'E', random.nextDouble() * 180);
-            GPSPosition bottomRight = new GPSPosition('N', random.nextDouble() * 90, 'E', random.nextDouble() * 180);
-            Parcela parcel = new Parcela(id, "Parcel " + id, topLeft, bottomRight);
+            int supisneCislo = currentSupisneCislo++;
 
-            log.info("Inserting Parcel: " + parcel.getId());
-            kdTreeParcela.insert(parcel, 2);
-            referenceList.add(parcel);
+            double latitude = Math.round(random.nextDouble() * 90 * 1000.0) / 1000.0;
+            double longitude = Math.round(random.nextDouble() * 180 * 1000.0) / 1000.0;
+
+            GPSPosition gpsPosition = new GPSPosition('N', latitude, 'E', longitude);
+            Parcela parcela = new Parcela(supisneCislo, "Parcela " + supisneCislo, gpsPosition);
+
+            log.info("Vkladám parcelu: " + parcela.getId() + " s GPS: " + parcela.getGpsPosition());
+            kdTreeParcela.insert(parcela, 2);
+            referenceList.add(parcela);
         }
+
        /**
          Kontrola štruktúry stromu
         */
-        private void validateStructure() {
-            //či počet prvkov v strome sedí s referenčným zoznamom
-            log.info("Validating structure...");
-            // int treeSize = getTreeSize(kdTreeParcela.getRoot()); //TODO: Implementácia prechádzania stromu
-            //if (treeSize != referenceList.size()) {
-            // log.severe("Size mismatch. KDTree size: " + treeSize + ", Reference list size: " + referenceList.size());
-            //}
+       private void validateStructure() {
+           log.info("Validujem štruktúru...");
+           int treeSize = getTreeSize(kdTreeParcela.getRoot());
+           if (treeSize != referenceList.size()) {
+               log.severe("Nezrovnalosť veľkosti. KDTree: " + treeSize + ", referenčný zoznam: " + referenceList.size());
+           }
+       }
+
+    private int getTreeSize(KDNode<Parcela> node) {
+        if (node == null) {
+            return 0;
         }
+        return 1 + getTreeSize(node.getLeft()) + getTreeSize(node.getRight());
+    }
 
         // Spustenie testov
         public static void main(String[] args) {
-            KDTreeTEster tester = new KDTreeTEster(12345); // Seed pre reprodukciu
-            tester.generateRandomOperations(10000); // Generuje 10 000 operácií
+            KDTreeTEster tester = new KDTreeTEster(12345);
+            tester.generateRandomOperations(10000);
             //tester.testOscillation(); // TODO:Oscilácia okolo prázdnej štruktúry
         }
     }
