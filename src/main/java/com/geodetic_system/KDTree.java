@@ -1,109 +1,83 @@
 package com.geodetic_system;
 
 import java.util.logging.Logger;
-public class KDTree<T extends IObjectInSystem<T, R>, R> {
+public class KDTree<T extends IObjectInSystem<T>> {
 
     private final Logger log = Logger.getLogger(KDTree.class.getName());
-    private KDNode<T, R> root;
+    private KDNode<T> root;
 
     public KDTree() {
         this.root = null;
     }
 
-    public KDNode<T, R> getRoot() {
+    public KDNode<T> getRoot() {
         return root;
     }
 
-    /**
-     * Metóda, ktorá vracia v tomto prípade na prvej úrovni dimenzie zemepisnú šírku,
-     * na druhej zemepisnú dĺžku získanú z objektu GPSPosition.
-     *
-     * @param position  GPSPosition objekt
-     * @param dimension dimenzia, ktorá je zadaná ako parameter
-     * @return
-     */
-    private double getDimensionValue(GPSPosition position, int dimension) {
-        // if (dimension != 2) return -1; ošetrenie prípadu, že sa užívateľ pokúsi prepísať dané dimenzie pre toto zadanie
-        return switch (dimension) {
-            case 0 -> position.getLatitude();
-            case 1 -> position.getLongitude();
-            default -> throw new IllegalArgumentException("Invalid dimension: " + dimension);
-        };
-    }
-
-
     //K1 - insert
-    public void insert(T data, int POCET_DIMENZII) {
+    public boolean insert(T data, int POCET_DIMENZII) {
         if (data == null) {
             log.warning("Data to insert is null.");
-            return;
+            return false;
         }
 
-        GPSPosition positionTopLeftOfInsertingObject = data.getTopLeft();
-        KDNode<T, R> nodeBeingInserted = new KDNode<>(data);
-        log.info(String.format("Inserting new node with position: %s", positionTopLeftOfInsertingObject));
-
-        //1. uplne prvy uzol sa vlozi ako koren
+        KDNode<T> nodeBeingInserted = new KDNode<>(data);
         if (root == null) {
             root = nodeBeingInserted;
-            log.info("Inserted to root: " + positionTopLeftOfInsertingObject);
-            return;
+            log.info("Inserted as root: " + root.getData().getGpsPosition());
+            return true;
         }
 
-        KDNode<T, R> current = root;
-        KDNode<T, R> parent = null;
-        int depth = 0; //podla hlbky sa bude striedat sirka / dlzka
+        KDNode<T> current = root;
+        KDNode<T> parent = null;
+        int depth = 0;
 
         while (current != null) {
-            parent = current; //ak je iného typu, current získa dátový typ, ktorý nemusí sedieť. - preto T a nie Object
-            //zavolat flag - compare to na zaklade objektu (current.data.getID())
-            //a porovnat s objektom, ktory sa ma vlozit (data.getID())
-
-            int result = current.getData().compareByID(data);
-            if (result == 0) {
-                log.warning("Data with the same ID already exists in the tree.");
-                return;
-            }
-
+            parent = current;
+            //ak je iného typu, current získa dátový typ, ktorý nemusí sedieť. - preto T a nie Object
+            //zavolat flag - compare to na zaklade objektu a porovnat s objektom, ktory sa ma vlozit (data.getID())
             //d - 0/1 == sirka/dlzka - na zaklae coho sa urcuje, v tomto pripade
-            int dimension = depth % POCET_DIMENZII;
-            log.fine(String.format("Depth: %d, Dimension: %d", depth, dimension));
+            //ak bude sirka / dlzka mensia ako hodnota, s ktorou sa porovnava, zaradi sa novy uzol do LAVEHO podstromu:
 
-            // bude sa porovnavat na zaklade aktualnej dimenzie -- d == 0 (sirka) alebo d == 1 (dlzka)
-            //ak bude sirka / dlzka mensia ako hodnota, s ktorou sa porovnava, zaradi sa novy uzol do LAVEHO
-            //podstromu:
-
-            double currentDimensionValue = getDimensionValue(current.getData().getTopLeft(), dimension);
-            double newDimensionValue = getDimensionValue(positionTopLeftOfInsertingObject, dimension);
-
+            int result = current.getData().compareByDimension(data, POCET_DIMENZII, depth);
             //je vacsi alebo mensi? - ak je mensi, tak sa posuvame dolava, inak doprava
 
-            if (newDimensionValue < currentDimensionValue) {
-                log.fine(String.format("Moving left from node with position: %s", current.getData().getTopLeft().toString()));
-                current = current.getLeft();
-            } else {
-                log.fine(String.format("Moving right from node with position: %s", current.getData().getTopLeft().toString()));
+            //current je mensi ako data, ideme doprava lebo nove data su vacsie
+            if (result < 0) {
                 current = current.getRight();
+            }
+
+            else if (result > 0) {
+                current = current.getLeft();
+            }
+            else {
+                log.warning("Duplicate data or other data detected at current dimension. Moving to the next dimension.");
             }
 
             depth++;
         }
 
+        // Keď nájdeme miesto pre uzol, porovnáme ho s rodičom
+        int compareWithParent = parent.getData().compareByDimension(data, POCET_DIMENZII, depth - 1);
 
-        int parentDimension = (depth - 1) % POCET_DIMENZII;
-        double parentDimensionValue = getDimensionValue(parent.getData().getTopLeft(), parentDimension);
-        double newNodeDimensionValue = getDimensionValue(positionTopLeftOfInsertingObject, parentDimension);
-
-        if (newNodeDimensionValue < parentDimensionValue) {
-            parent.setLeft(nodeBeingInserted);
-            log.info(String.format("Inserted as left child of node with position: %s", parent.getData().getTopLeft().toString()));
-        } else {
+        // Ak je rodič menší, uzol ide doprava
+        if (compareWithParent < 0) {
             parent.setRight(nodeBeingInserted);
-            log.info(String.format("Inserted as right child of node with position: %s", parent.getData().getTopLeft().toString()));
+            log.info("Inserted " + nodeBeingInserted.getData().getGpsPosition() + " as right child of parent with position: " + parent.getData().getGpsPosition());
+        }  // Ak je rodič väčší, uzol ide doľava
+        else if (compareWithParent > 0) {
+            parent.setLeft(nodeBeingInserted);
+            log.info("Inserted " + nodeBeingInserted.getData().getGpsPosition() + " as left child of parent: " + parent.getData().getGpsPosition());
+        }  // Ak sú hodnoty rovnaké vo všetkých dimenziách, nevkladáme ho
+        else {
+            log.warning("Data with ID " + data.getId() + " already exists in the tree.");
+            return false;
         }
 
         nodeBeingInserted.setParent(parent);
-        log.fine(String.format("New node parent set to: %s", parent.getData().getTopLeft().toString()));
+        log.fine(String.format("New node parent set to: %s", parent.getData().getGpsPosition()));
+
+        return true;
     }
 
     // TODO: Implement find() and delete() methods
