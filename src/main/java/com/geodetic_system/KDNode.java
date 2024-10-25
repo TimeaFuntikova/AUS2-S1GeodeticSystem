@@ -2,7 +2,7 @@ package com.geodetic_system;
 
 public class KDNode<T extends IObjectInSystem<T>> {
 
-    private final T data;
+    private T data;
     private KDNode<T> left;
     private KDNode<T> right;
     private KDNode<T> parent;
@@ -16,6 +16,10 @@ public class KDNode<T extends IObjectInSystem<T>> {
 
     public T getData() {
         return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 
     public KDNode<T> getLeft() {
