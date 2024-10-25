@@ -13,8 +13,10 @@ public class MyComparator <T extends IObjectInSystem<T>> {
         this.depth = depth;
     }
 
+    //bude sa porovnavat podla suradnic top left
     public int compare(T a, T b, int POCET_DIMENZII) {
-        if (depth % POCET_DIMENZII == 0) return Double.compare(a.getGpsPosition().getLatitude(), b.getGpsPosition().getLatitude());
-        return Double.compare(a.getGpsPosition().getLongitude(), b.getGpsPosition().getLongitude());
+
+        if (depth % POCET_DIMENZII == 0) return Double.compare(a.getTopLeft().getLatitude(), b.getTopLeft().getLatitude());
+        return Double.compare(a.getTopLeft().getLongitude(), b.getTopLeft().getLongitude());
     }
 }
