@@ -1,6 +1,5 @@
 package com.geodetic_system;
 
-import java.util.Stack;
 import java.util.logging.Logger;
 
 public class KDTree<T extends IObjectInSystem<T>> {
@@ -81,146 +80,111 @@ public class KDTree<T extends IObjectInSystem<T>> {
     }
 
         // K2 - find
-        public T find(T target, int POCET_DIMENZII) {
+        public T find(T target, int numDimensions) {
             if (target == null) return null;
 
             KDNode<T> current = root;
             int depth = 0;
-            Stack<KDNode<T>> stack = new Stack<>();
 
-            //bude prechadzat strom a hladat cielovy uzol
-            while (current != null || !stack.isEmpty()) {
-                while (current != null) {
-                    stack.push(current);
-                    current = current.getLeft();
-                }
-                current = stack.pop();
+            while (current != null) {
+                int currentDimension = depth % numDimensions;
 
-                depth++;
-                int currentDimension = depth % POCET_DIMENZII;
                 if (current.getData().compareByDimension(target, currentDimension) == 0) {
-                    log.info("Found node: " + current.getData().getTopLeft() + ", " + current.getData().getBottomRight());
+                    log.info("Found node: " + current.getData());
                     return current.getData();
                 }
 
-                log.info("Current node: " + current.getData().getTopLeft() + ", " + current.getData().getBottomRight());
-                current = current.getRight();
+                int comparison = current.getData().compareByDimension(target, currentDimension);
+                if (comparison < 0) {
+                    current = current.getRight();
+                } else {
+                    current = current.getLeft();
+                }
+                depth++;
             }
 
-            log.warning("Node with ID: " + target.getId() + " not found.");
-            return null; // Uzol nebol nájdený
+            log.warning("Node not found.");
+            return null;
         }
 
-    public boolean delete(T target, int POCET_DIMENZII) {
-        if (root == null) {
-            return false;
-        }
+    public boolean delete(T target, int numDimensions) {
+        if (root == null || target == null) return false;
 
-        Stack<KDNode<T>> stack = new Stack<>();
         KDNode<T> current = root;
         KDNode<T> parent = null;
         int depth = 0;
 
-        while (current != null) {
-            if (current.getData().compareByDimension(target, depth % POCET_DIMENZII) == 0) {
-                log.info("Deleting node with data: " + current.getData());
-                break;
-            }
-
-            int currentDimension = depth % POCET_DIMENZII;
-            int result = current.getData().compareByDimension(target, currentDimension);
+        while (current != null && current.getData().compareByDimension(target, depth % numDimensions) != 0) {
             parent = current;
-            current = (result < 0) ? current.getRight() : current.getLeft();
+            int currentDimension = depth % numDimensions;
+            int comparison = current.getData().compareByDimension(target, currentDimension);
+
+            if (comparison < 0) {
+                current = current.getRight();
+            } else {
+                current = current.getLeft();
+            }
             depth++;
         }
 
         if (current == null) {
-            log.warning("Delete failed. Target not found in KDTree.");
+            log.warning("Node to delete not found.");
             return false;
         }
 
         if (current.getLeft() == null && current.getRight() == null) {
-            log.info("Deleting leaf node.");
             replaceChild(parent, current, null);
-        } else if (current.getLeft() == null || current.getRight() == null) {
-            log.info("Deleting node with one child.");
+        }
+        else if (current.getLeft() == null || current.getRight() == null) {
             KDNode<T> child = (current.getLeft() != null) ? current.getLeft() : current.getRight();
             replaceChild(parent, current, child);
         } else {
-            int currentDim = depth % POCET_DIMENZII;
+            int currentDim = depth % numDimensions;
+            KDNode<T> replacement = findMin(current.getRight(), currentDim, numDimensions);
 
-            KDNode<T> replacementNode;
-            KDNode<T> replacementParent = current;
-
-            if (currentDim == 0) {
-                replacementNode = findMaxInLeftSubtree(current.getLeft(), currentDim, replacementParent, POCET_DIMENZII, depth + 1);
-            } else {
-                replacementNode = findMinInRightSubtree(current.getRight(), currentDim, replacementParent, POCET_DIMENZII, depth + 1);
-            }
-
-            if (replacementNode != null) {
-                if (currentDim == 0 && replacementParent.getRight() == replacementNode) {
-                    replacementParent.setRight(replacementNode.getLeft());
-                } else if (currentDim == 1 && replacementParent.getLeft() == replacementNode) {
-                    replacementParent.setLeft(replacementNode.getRight());
-                }
-
-                current.setData(replacementNode.getData());
-                log.info("Replacing with node: " + replacementNode.getData());
+            if (replacement != null) {
+                current.setData(replacement.getData());
+                replaceChild(replacement.getParent(), replacement, replacement.getRight());
             }
         }
 
         return true;
     }
 
-    private KDNode<T> findMaxInLeftSubtree(KDNode<T> root, int dimension, KDNode<T> parent, int POCET_DIMENZII, int currentDepth) {
-        KDNode<T> maxNode = root;
+    private KDNode<T> findMin(KDNode<T> root, int dimension, int numDimensions) {
+        KDNode<T> current = root;
 
-        if (dimension == 0) {
-            while (maxNode.getRight() != null) {
-                parent = maxNode;
-                maxNode = maxNode.getRight();
+        while (current != null) {
+            int currentDimension = dimension % numDimensions;
+
+            if (currentDimension == dimension) {
+                if (current.getLeft() != null) {
+                    current = current.getLeft();
+                } else {
+                    return current;
+                }
+            } else {
+                if (current.getRight() != null) {
+                    current = current.getRight();
+                } else {
+                    return current;
+                }
             }
-        } else {
-
-            return null;
         }
-
-        return maxNode;
-    }
-    private KDNode<T> findMinInRightSubtree(KDNode<T> root, int dimension, KDNode<T> parent, int POCET_DIMENZII, int currentDepth) {
-        KDNode<T> minNode = root;
-
-        if (dimension == 1) {
-            while (minNode.getLeft() != null) {
-                parent = minNode;
-                minNode = minNode.getLeft();
-            }
-        } else {
-
-            return null;
-        }
-
-        return minNode;
-    }
-
-    private KDNode<T> findMinNode(KDNode<T> root, int dimension, KDNode<T> parent, int POCET_DIMENZII, int depth) {
-        KDNode<T> minNode = root;
-        while (minNode.getLeft() != null && dimension == depth % POCET_DIMENZII) {
-            parent = minNode;
-            minNode = minNode.getLeft();
-        }
-        return minNode;
+        return null;
     }
 
     private void replaceChild(KDNode<T> parent, KDNode<T> current, KDNode<T> replacement) {
         if (parent == null) {
-            // If the parent is null, then current is the root
             root = replacement;
         } else if (parent.getLeft() == current) {
             parent.setLeft(replacement);
         } else {
             parent.setRight(replacement);
+        }
+
+        if (replacement != null) {
+            replacement.setParent(parent);
         }
     }
 }
