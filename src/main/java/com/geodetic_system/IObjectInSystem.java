@@ -5,6 +5,6 @@ public interface IObjectInSystem<T> {
     String getDescription();
     GPSPosition getTopLeft();
     GPSPosition getBottomRight();
-    int compareByDimension(T other, int POCET_DIMENZII, int depth);
-    boolean dontTheyIntersect(T a, T b);
+    int compareByDimension(T other, int currentDimension);
+    boolean areIntersecting(T a, T b);
 }

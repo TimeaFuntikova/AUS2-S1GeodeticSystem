@@ -3,7 +3,7 @@ package com.geodetic_system;
 public class RelatedObjectsManager {
 
     private RelatedObjectsManager() {}
-        public static <T extends IWrapperForObject<T>> boolean areIntersecting(GeodeticObject a, GeodeticObject b) {
+        public static boolean areIntersecting(GeodeticObject a, GeodeticObject b) {
             // Zistíme, či sa objekty neprekrývajú:
             boolean notIntersecting = (a.getRightBottomX() < b.getLeftTopX() || // a je úplne naľavo od b
                     a.getLeftTopX() > b.getRightBottomX() || // a je úplne napravo od b
