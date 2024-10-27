@@ -44,9 +44,3 @@ podmienka - breakpoint po nejakom x-raze
 sledovanie obsahu premennych - hodnoty premennych
 + profiler - sledovanie casovej narocnosti - meranie vykonnosti aplikacie
 (ktore metody zaberaju vykon || triedy)
-
-
-
-
-
-
