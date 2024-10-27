@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * Trieda 'Parcela' ma svoje unikatne cislo, popis a zoznam nehnutelnosti, ktore sa na nej nachadzaju
  * a rovnako aj zoznam nehnutelnosti, ktore sa na danej parcele nachadzaju.
  */
-public class Parcela extends GeodeticObject implements IWrapperForObject<Parcela> {
+public class Parcela extends GeodeticObject {
     private final int parcelaNumber; //(cislo parcely)
     private final String description;
     private final GPSPosition topLeft; // pozicia parcely

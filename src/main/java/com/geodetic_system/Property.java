@@ -8,7 +8,7 @@ import java.util.Objects;
  * Trieda 'Nehnutelnost' ma svoje unikatne supisne cislo, popis, GPS pozicie, ktore definuju
  * jej ohranicenie a zoznam parciel, na ktorych nehnutelnost stoji.
  */
-public class Property extends GeodeticObject implements IWrapperForObject<Property> {
+public class Property extends GeodeticObject {
     private final int propertyNumber;
     private final String description;
     private final GPSPosition topLeft; // pozicia parcely
