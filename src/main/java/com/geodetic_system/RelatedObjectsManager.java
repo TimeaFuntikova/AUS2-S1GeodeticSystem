@@ -12,10 +12,10 @@ public class RelatedObjectsManager {
 
             boolean intersect = !notIntersecting;
 
-            System.out.println("Checking intersection between: ");
-            System.out.println("Object A Top-Left: " + a.getLeftTopX() + ", " + a.getLeftTopY() + " Bottom-Right: " + a.getRightBottomX() + ", " + a.getRightBottomY());
-            System.out.println("Object B Top-Left: " + b.getLeftTopX() + ", " + b.getLeftTopY() + " Bottom-Right: " + b.getRightBottomX() + ", " + b.getRightBottomY());
-            System.out.println("Intersect result: " + intersect);
+            //System.out.println("Checking intersection between: ");
+            //System.out.println("Object A Top-Left: " + a.getLeftTopX() + ", " + a.getLeftTopY() + " Bottom-Right: " + a.getRightBottomX() + ", " + a.getRightBottomY());
+            //System.out.println("Object B Top-Left: " + b.getLeftTopX() + ", " + b.getLeftTopY() + " Bottom-Right: " + b.getRightBottomX() + ", " + b.getRightBottomY());
+            //System.out.println("Intersect result: " + intersect);
 
             return intersect;
     }
