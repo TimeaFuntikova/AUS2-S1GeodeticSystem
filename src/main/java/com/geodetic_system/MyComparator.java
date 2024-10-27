@@ -5,18 +5,22 @@ package com.geodetic_system;
  * Pre porovnanie sa pouziva 'depth' a 'POCET_DIMENZII' a je prisposobeny priamo zadaniu.
  * @param <T> typ objektu, ktory sa bude porovnavat
  */
-public class MyComparator <T extends IObjectInSystem<T>> {
+public class MyComparator<T extends IObjectInSystem<T>> {
+    public static final double TOLERANCE = 0.0001; // Example tolerance value
 
-    private int depth;
-
-    public void setDepth(int depth) {
-        this.depth = depth;
+    public int compare(T a, T b, int currentDimension) {
+        if (currentDimension == 0) {
+            return compareWithTolerance(a.getTopLeft().getLatitude(), b.getTopLeft().getLatitude());
+        } else {
+            return compareWithTolerance(a.getTopLeft().getLongitude(), b.getTopLeft().getLongitude());
+        }
     }
 
-    //bude sa porovnavat podla suradnic top left
-    public int compare(T a, T b, int POCET_DIMENZII) {
-
-        if (depth % POCET_DIMENZII == 0) return Double.compare(a.getTopLeft().getLatitude(), b.getTopLeft().getLatitude());
-        return Double.compare(a.getTopLeft().getLongitude(), b.getTopLeft().getLongitude());
+    private int compareWithTolerance(double value1, double value2) {
+        if (Math.abs(value1 - value2) < TOLERANCE) {
+            return 0;
+        } else {
+            return Double.compare(value1, value2);
+        }
     }
 }
