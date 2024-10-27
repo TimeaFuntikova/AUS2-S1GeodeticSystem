@@ -5,15 +5,28 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+/** old unused class - vymaze sa .
+ *
+ */
 public class Main {
     private static final Logger log = Logger.getLogger(Main.class.getName());
+    private static final int POCET_DIMENZII = 2;
+    private KDTree<GeodeticObject> kdTreeParcela;  // KDTree pre Parcely
+    private KDTree<GeodeticObject> kdTreeProperty; // KDTree pre Nehnuteľnosti
 
     public static void main(String[] args) {
         setFormattingOnConsole();
+        //Main mainInstance = new Main();
+        // Spustenie GUI
+        javax.swing.SwingUtilities.invokeLater(GUI::new);
+        //mainInstance.runParcelaExample();
+       // mainInstance.runPropertyExample();
+    }
 
-        Main mainInstance = new Main();
-        mainInstance.runParcelaExample();
-        mainInstance.runPropertyExample();
+    public Main() {
+        // Inicializácia KD stromov
+        kdTreeParcela = new KDTree<>();
+        kdTreeProperty = new KDTree<>();
     }
 
     private static void setFormattingOnConsole() {
@@ -25,64 +38,71 @@ public class Main {
         Main.log.setLevel(Level.FINE);
     }
 
-    // Parcely
-
-
+    // Parcely (test prekryvu)
     private void runParcelaExample() {
-        final int POCET_DIMENZII = 2;
-        GPSPosition gpsPosition1 = new GPSPosition('N', 48.02, 'E', 17.02);
-        GPSPosition gpsPosition2 = new GPSPosition('N', 48.05, 'E', 17.05);
-        GPSPosition gpsPosition3 = new GPSPosition('N', 48.10, 'E', 17.10);
-        GPSPosition gpsPosition4 = new GPSPosition('N', 48.07, 'E', 17.07);
-        GPSPosition gpsPosition5 = new GPSPosition('N', 48.15, 'E', 17.09);
-        GPSPosition gpsPosition6 = new GPSPosition('N', 48.09, 'E', 17.12);
+        GPSPosition gpsPosition1 = new GPSPosition('N', 48.02, 'E', 17.02); // Top-left
+        GPSPosition gpsPosition2 = new GPSPosition('N', 48.05, 'E', 17.05); // Bottom-right
 
-        Parcela parcela1 = new Parcela(1, "Parcela 1", gpsPosition1);
-        Parcela parcela2 = new Parcela(2, "Parcela 2", gpsPosition2);
-        Parcela parcela3 = new Parcela(3, "Parcela 3", gpsPosition3);
-        Parcela parcela4 = new Parcela(4, "Parcela 4", gpsPosition4);
-        Parcela parcela5 = new Parcela(5, "Parcela 5", gpsPosition5);
-        Parcela parcela6 = new Parcela(6, "Parcela 6", gpsPosition6);
+        GPSPosition gpsPosition3 = new GPSPosition('N', 48.03, 'E', 17.03); // Top-left (táto sa prekrýva s parcela1)
+        GPSPosition gpsPosition4 = new GPSPosition('N', 48.06, 'E', 17.06); // Bottom-right
+
+        GPSPosition gpsPosition5 = new GPSPosition('N', 48.10, 'E', 17.10); // Top-left (táto sa neprekrýva)
+        GPSPosition gpsPosition6 = new GPSPosition('N', 48.15, 'E', 17.15); // Bottom-right
+
+        Parcela parcela1 = new Parcela(1, "Parcela 1", gpsPosition1, gpsPosition2); // Neprekrýva sa
+        Parcela parcela2 = new Parcela(2, "Parcela 2", gpsPosition3, gpsPosition4); // Prekrýva sa s parcela1
+        Parcela parcela3 = new Parcela(3, "Parcela 3", gpsPosition5, gpsPosition6); // Neprekrýva sa
 
         log.info("Parcela example-------------------------------------");
-        KDTree<Parcela> kdTreeParcela = new KDTree<>();
-        kdTreeParcela.insert(parcela1, POCET_DIMENZII);
-        kdTreeParcela.insert(parcela2, POCET_DIMENZII);
-        kdTreeParcela.insert(parcela3, POCET_DIMENZII);
-        kdTreeParcela.insert(parcela4, POCET_DIMENZII);
-        kdTreeParcela.insert(parcela5, POCET_DIMENZII);
-        kdTreeParcela.insert(parcela6, POCET_DIMENZII);
+        KDTree<GeodeticObject> kdTreeParcela = new KDTree<>();
+        kdTreeParcela.insert(parcela1, POCET_DIMENZII); // Insert úspešný
+        kdTreeParcela.insert(parcela2, POCET_DIMENZII); // Prekrýva sa, vkladanie je odmietnuté
+        kdTreeParcela.insert(parcela3, POCET_DIMENZII); // Insert úspešný
 
+        log.info("Kontrola prekryvu pre parcely:");
+        boolean intersects = RelatedObjectsManager.areIntersecting(parcela1, parcela2);
+        log.info("Parcela 1 a Parcela 2 sa " + (intersects ? "neprekrývajú." : "prekrývajú!"));
+
+        intersects = RelatedObjectsManager.areIntersecting(parcela1, parcela3);
+        log.info("Parcela 1 a Parcela 3 sa " + (intersects ? "neprekrývajú." : "prekrývajú!"));
+
+        GeodeticObject found = kdTreeParcela.find(parcela1, POCET_DIMENZII);
+        if (found != null) {
+            log.info("Found parcela: " + found.getDescription());
+        } else {
+            log.warning("Parcela not found!");
+        }
+
+        kdTreeParcela.delete(parcela1, POCET_DIMENZII);
+        log.info("Deleted parcela: " + parcela2 .getId());
     }
 
     private void runPropertyExample() {
-        final int POCET_DIMENZII = 2;
+        GPSPosition position1 = new GPSPosition('N', 48.151, 'E', 17.101); // Top-left
+        GPSPosition position2 = new GPSPosition('N', 48.171, 'E', 17.121); // Bottom-right
 
-        GPSPosition position1 = new GPSPosition('N', 48.151, 'E', 17.101);
-        GPSPosition position2 = new GPSPosition('N', 48.201, 'E', 17.201);
-        GPSPosition position3 = new GPSPosition('N', 48.251, 'E', 17.301);
-        GPSPosition position4 = new GPSPosition('N', 48.131, 'E', 17.111);
-        GPSPosition position5 = new GPSPosition('N', 48.221, 'E', 17.211);
-        GPSPosition position6 = new GPSPosition('N', 48.181, 'E', 17.181);
-        GPSPosition position7 = new GPSPosition('N', 48.271, 'E', 17.311);
+        GPSPosition position3 = new GPSPosition('N', 48.160, 'E', 17.111); // Top-left (prekrýva sa s property1)
+        GPSPosition position4 = new GPSPosition('N', 48.180, 'E', 17.131); // Bottom-right
 
-        Property property1 = new Property(100, "Property 1", position1);
-        Property property2 = new Property(101, "Property 2", position2);
-        Property property3 = new Property(102, "Property 3", position3);
-        Property property4 = new Property(103, "Property 4", position4);
-        Property property5 = new Property(104, "Property 5", position5);
-        Property property6 = new Property(105, "Property 6", position6);
-        Property property7 = new Property(106, "Property 7", position7);
+        GPSPosition position5 = new GPSPosition('N', 48.200, 'E', 17.200); // Top-left (neprekrýva sa)
+        GPSPosition position6 = new GPSPosition('N', 48.220, 'E', 17.220); // Bottom-right
+
+        Property property1 = new Property(100, "Property 1", position1, position2); // Neprekrýva sa
+        Property property2 = new Property(101, "Property 2", position3, position4); // Prekrýva sa s property1
+        Property property3 = new Property(102, "Property 3", position5, position6); // Neprekrýva sa
 
         log.info("Property example-------------------------------------");
-        KDTree<Property> kdTreeProperty = new KDTree<>();
-        kdTreeProperty.insert(property1, POCET_DIMENZII);
-        kdTreeProperty.insert(property2, POCET_DIMENZII);
-        kdTreeProperty.insert(property3, POCET_DIMENZII);
-        kdTreeProperty.insert(property4, POCET_DIMENZII);
-        kdTreeProperty.insert(property5, POCET_DIMENZII);
-        kdTreeProperty.insert(property6, POCET_DIMENZII);
-        kdTreeProperty.insert(property7, POCET_DIMENZII);
-    }
+        KDTree<GeodeticObject> kdTreeProperty = new KDTree<>();
+        kdTreeProperty.insert(property1, POCET_DIMENZII); // Insert úspešný
+        kdTreeProperty.insert(property2, POCET_DIMENZII); // Prekrýva sa s property1, vkladanie je odmietnuté
+        kdTreeProperty.insert(property3, POCET_DIMENZII); // Insert úspešný
 
+        // Kontrola prekryvu
+        log.info("Kontrola prekryvu pre nehnuteľnosti:");
+        boolean intersects = RelatedObjectsManager.areIntersecting(property1, property2);
+        log.info("Property 1 a Property 2 sa " + (intersects ? "neprekrývajú." : "prekrývajú!"));
+
+        intersects = RelatedObjectsManager.areIntersecting(property1, property3);
+        log.info("Property 1 a Property 3 sa " + (intersects ? "neprekrývajú." : "prekrývajú!"));
+    }
 }
