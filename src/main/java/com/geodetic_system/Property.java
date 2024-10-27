@@ -2,12 +2,13 @@ package com.geodetic_system;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Trieda 'Nehnutelnost' ma svoje unikatne supisne cislo, popis, GPS pozicie, ktore definuju
  * jej ohranicenie a zoznam parciel, na ktorych nehnutelnost stoji.
  */
-public class Property implements IObjectInSystem<Property>, IWrapperForObject<Property> {
+public class Property extends GeodeticObject implements IWrapperForObject<Property> {
     private final int propertyNumber;
     private final String description;
     private final GPSPosition topLeft; // pozicia parcely
@@ -39,15 +40,22 @@ public class Property implements IObjectInSystem<Property>, IWrapperForObject<Pr
     }
 
     @Override
+    public int compareByDimension(GeodeticObject other, int currentDimension) {
+        return this.myComparator.compare(this, other, currentDimension);
+
+    }
+
+    @Override
+    public boolean areIntersecting(GeodeticObject a, GeodeticObject b) {
+        return RelatedObjectsManager.areIntersecting(a, b);
+
+    }
+
+    @Override
     public GPSPosition getTopLeft() {
         return this.topLeft;
     }
 
-    @Override
-    public int compareByDimension(Property other, int POCET_DIMENZII, int depth) {
-        this.myComparator.setDepth(depth);
-        return this.myComparator.compare(this, other, POCET_DIMENZII);
-    }
 
     public void addRelatedObject(Parcela obj) {
         this.relatedObjects.add(obj);
@@ -78,7 +86,17 @@ public class Property implements IObjectInSystem<Property>, IWrapperForObject<Pr
     }
 
     @Override
-    public boolean dontTheyIntersect(Property cur, Property other) {
-        return RelatedObjectsManager.dontTheyIntersect(cur, other);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Property property = (Property) o;
+        return this.getUniqueId() == property.getUniqueId();
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUniqueId());
+    }
+
+
 }

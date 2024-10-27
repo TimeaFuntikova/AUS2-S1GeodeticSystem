@@ -3,13 +3,14 @@ package com.geodetic_system;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
  * Trieda 'Parcela' ma svoje unikatne cislo, popis a zoznam nehnutelnosti, ktore sa na nej nachadzaju
  * a rovnako aj zoznam nehnutelnosti, ktore sa na danej parcele nachadzaju.
  */
-public class Parcela implements IObjectInSystem<Parcela>, IWrapperForObject<Parcela> {
+public class Parcela extends GeodeticObject implements IWrapperForObject<Parcela> {
     private final int parcelaNumber; //(cislo parcely)
     private final String description;
     private final GPSPosition topLeft; // pozicia parcely
@@ -43,12 +44,6 @@ public class Parcela implements IObjectInSystem<Parcela>, IWrapperForObject<Parc
         return this.topLeft;
     }
 
-    @Override
-    public int compareByDimension(Parcela other, int POCET_DIMENZII, int depth) {
-        this.myComparator.setDepth(depth);
-        return this.myComparator.compare(this, other, POCET_DIMENZII);
-    }
-
     public void addRelatedObject(Property obj) {
        this.relatedObjects.add(obj);
        log.info("Pridavam nehnutelnost: " + obj.getId() + " na parcelu: " + this.getId());
@@ -61,6 +56,16 @@ public class Parcela implements IObjectInSystem<Parcela>, IWrapperForObject<Parc
     @Override
     public GPSPosition getBottomRight() {
         return this.bottomRight;
+    }
+
+    @Override
+    public int compareByDimension(GeodeticObject other, int currentDimension) {
+        return this.myComparator.compare(this, other, currentDimension);
+    }
+
+    @Override
+    public boolean areIntersecting(GeodeticObject a, GeodeticObject b) {
+        return RelatedObjectsManager.areIntersecting(a, b);
     }
 
     @Override
@@ -84,7 +89,17 @@ public class Parcela implements IObjectInSystem<Parcela>, IWrapperForObject<Parc
     }
 
     @Override
-    public boolean dontTheyIntersect(Parcela cur, Parcela other) {
-        return RelatedObjectsManager.dontTheyIntersect(cur, other);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Parcela parcela = (Parcela) o;
+        return this.getUniqueId() == parcela.getUniqueId();
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUniqueId());
+    }
+
+
 }
