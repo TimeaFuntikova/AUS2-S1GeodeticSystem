@@ -73,6 +73,8 @@ public class KDTree<T extends IObjectInSystem<T>> {
         }
 
         nodeBeingInserted.setParent(parent);
+
+        //tu je natvrdo vypisana pozicia, ale iba kvoli logom zatial, aby sa vedelo, ze sa vlozilo - pojde prec.
         log.info("Inserted " + nodeBeingInserted.getData().getTopLeft() + ", " + nodeBeingInserted.getData().getBottomRight()+ " as a child of parent with position: " + parent.getData().getTopLeft() + ", " + parent.getData().getBottomRight());
         log.fine(String.format("New node parent set to: %s", parent.getData().getTopLeft() + ", " + parent.getData().getBottomRight()));
 
@@ -110,10 +112,10 @@ public class KDTree<T extends IObjectInSystem<T>> {
     /**
      * Vymazanie uzla z KD stromu.
      * @param target cieľový uzol
-     * @param numDimensions počet dimenzií
+     * @param POCET_DIMENZII počet dimenzií
      * @return true, ak sa podarilo vymazať uzol, inak false
      */
-    public boolean delete(T target, int numDimensions) {
+    public boolean delete(T target, int POCET_DIMENZII) {
         if (root == null || target == null) return false;
 
         //od rootu cez cely strom najdeme take uzly, ktore pot. mozu robit problem - zhodna suradnica
@@ -135,7 +137,7 @@ public class KDTree<T extends IObjectInSystem<T>> {
         }
 
         //vymazanie najdeneho uzla
-        return deleteExactNode(nodeToDelete, numDimensions);
+        return deleteExactNode(nodeToDelete, POCET_DIMENZII);
     }
 
     /**
@@ -345,7 +347,12 @@ public class KDTree<T extends IObjectInSystem<T>> {
         }
     }
 
-    private void manualInsertNode(T data, int numDimensions) {
+    /**
+     * Manuálne vloženie uzla do KD stromu.
+     * @param data dáta uzla
+     * @param POCET_DIMENZII počet dimenzií
+     */
+    private void manualInsertNode(T data, int POCET_DIMENZII) {
         KDNode<T> newNode = new KDNode<>(data);
         if (root == null) {
             root = newNode;
@@ -358,7 +365,7 @@ public class KDTree<T extends IObjectInSystem<T>> {
 
         while (current != null) {
             parent = current;
-            int currentDimension = depth % numDimensions;
+            int currentDimension = depth % POCET_DIMENZII;
             int comparison = current.getData().compareByDimension(data, currentDimension);
 
             if (comparison < 0) {
@@ -369,7 +376,7 @@ public class KDTree<T extends IObjectInSystem<T>> {
             depth++;
         }
 
-        int currentDimension = (depth - 1) % numDimensions;
+        int currentDimension = (depth - 1) % POCET_DIMENZII;
         int compareWithParent = parent.getData().compareByDimension(data, currentDimension);
 
         if (compareWithParent > 0) {

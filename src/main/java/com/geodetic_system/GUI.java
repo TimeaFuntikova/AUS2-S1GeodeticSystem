@@ -12,12 +12,15 @@ public class GUI {
     private JTextField bottomRightLongText;
     private JTextField findLatitudeText;
     private JTextField findLongitudeText;
-    private JTextField deleteLatitudeText; // Field for deletion based on latitude
-    private JTextField deleteLongitudeText; // Field for deletion based on longitude
-    private JTextArea outputArea; // For output messages
+    private JTextField deleteLatitudeText;
+    private JTextField deleteLongitudeText;
+    private JTextArea outputArea;
 
     private static final int POCET_DIMENZII = 2;
 
+    /**
+     * Constructor for the GUI
+     */
     public GUI() {
         JFrame frame = new JFrame("KDTree App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,6 +34,10 @@ public class GUI {
         frame.setVisible(true);
     }
 
+    /**
+     * Place components on the panel
+     * @param panel panel to place components on
+     */
     private void placeComponents(JPanel panel) {
         panel.setLayout(null);
 
@@ -109,6 +116,9 @@ public class GUI {
         scrollPane.setBounds(10, 270, 460, 150);
         panel.add(scrollPane);
 
+        /**
+         * Insert button action listener
+         */
         insertButton.addActionListener(e -> {
             try {
                 int id = Integer.parseInt(userText.getText());
@@ -132,6 +142,9 @@ public class GUI {
             }
         });
 
+        /**
+         * Find button action listener
+         */
         findButton.addActionListener(e -> {
             try {
                 double latitude = Double.parseDouble(findLatitudeText.getText());
@@ -151,6 +164,9 @@ public class GUI {
             }
         });
 
+        /**
+         * Delete button action listener
+         */
         deleteButton.addActionListener(e -> {
             try {
                 double deleteTopLeftLat = Double.parseDouble(deleteLatitudeText.getText());
