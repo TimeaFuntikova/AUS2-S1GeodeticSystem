@@ -3,15 +3,20 @@ package com.geodetic_system;
 public class RelatedObjectsManager {
 
     private RelatedObjectsManager() {}
+        public static <T extends IWrapperForObject<T>> boolean areIntersecting(T a, T b) {
+            // Zistíme, či sa objekty neprekrývajú
+            boolean notIntersecting = (a.getRightBottomX() < b.getLeftTopX() || // a je úplne naľavo od b
+                    a.getLeftTopX() > b.getRightBottomX() || // a je úplne napravo od b
+                    a.getRightBottomY() > b.getLeftTopY() || // a je úplne nad b
+                    a.getLeftTopY() < b.getRightBottomY());  // a je úplne pod b
 
-        public static <T extends IWrapperForObject<T>> boolean dontTheyIntersect(T a, T b) {
-        if (a.getRightBottomX() <= b.getLeftTopX() || // Jeden objekt je naľavo od druhého
-                a.getLeftTopX() >= b.getRightBottomX() || // Jeden objekt je napravo od druhého
-                a.getRightBottomY() <= b.getLeftTopY() || // Jeden objekt je nad druhým
-                a.getLeftTopY() >= b.getRightBottomY())   // Jeden objekt je pod druhým
-        {
-            return true; // Neprekrývajú sa
-        }
-        return false; // Prekrývajú sa
+            boolean intersect = !notIntersecting;
+
+            System.out.println("Checking intersection between: ");
+            System.out.println("Object A Top-Left: " + a.getLeftTopX() + ", " + a.getLeftTopY() + " Bottom-Right: " + a.getRightBottomX() + ", " + a.getRightBottomY());
+            System.out.println("Object B Top-Left: " + b.getLeftTopX() + ", " + b.getLeftTopY() + " Bottom-Right: " + b.getRightBottomX() + ", " + b.getRightBottomY());
+            System.out.println("Intersect result: " + intersect);
+
+            return intersect;
     }
 }
