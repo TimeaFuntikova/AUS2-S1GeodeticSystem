@@ -14,7 +14,7 @@ public class KDTreeTEster {
     private final List<GeodeticObject> listForValidation;
     private final Random random;
     private static int currentSupisneCislo = 100;
-    private static final int POCET_OPERACII = 100000;
+    private static final int POCET_OPERACII = 10000;
 
     public KDTreeTEster(long seed) {
         this.kdTreeParcela = new KDTree<>();

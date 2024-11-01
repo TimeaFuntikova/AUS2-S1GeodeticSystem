@@ -7,18 +7,18 @@ import static com.geodetic_system.MyComparator.TOLERANCE;
 public abstract class GeodeticObject implements IObjectInSystem<GeodeticObject> {
     private static long currentId = 0;
     private final long uniqueId;
+    public abstract int getId();
+    public abstract double getLeftTopX();
+    public abstract double getRightBottomX();
+    public abstract double getLeftTopY();
+    public abstract double getRightBottomY();
 
-    public GeodeticObject() {
-        this.uniqueId = generateUniqueId();
-    }
+    GeodeticObject referenceObject = null;
 
-    private synchronized long generateUniqueId() {
-        return currentId++;
-    }
-
-    public long getUniqueId() {
-        return uniqueId;
-    }
+    protected GeodeticObject() {this.uniqueId = generateUniqueId();}
+    private synchronized long generateUniqueId() {return currentId++;}
+    public long getUniqueId() {return uniqueId;}
+    public GeodeticObject getReferenceObject() {return referenceObject;}
 
     @Override
     public boolean equals(Object o) {
@@ -30,16 +30,8 @@ public abstract class GeodeticObject implements IObjectInSystem<GeodeticObject> 
                 Math.abs(this.getLeftTopY() - that.getLeftTopY()) < TOLERANCE;
     }
 
-
-
     @Override
     public int hashCode() {
         return Objects.hash(uniqueId);
     }
-
-    public abstract int getId();
-    public abstract double getLeftTopX();
-    public abstract double getRightBottomX();
-    public abstract double getLeftTopY();
-    public abstract double getRightBottomY();
 }

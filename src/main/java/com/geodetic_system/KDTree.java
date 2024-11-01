@@ -54,8 +54,8 @@ public class KDTree<T extends IObjectInSystem<T>> {
 
             int result = current.getData().compareByDimension(data, currentDimension);
             if (result == 0) {
-                log.info("Duplicate key detected at current dimension. Inserting into left subtree.");
-                current = current.getLeft();
+                log.info("Duplicate key detected at current dimension. Duplication not allowed.");
+                return false;
             } else {
                 current = (result < 0) ? current.getRight() : current.getLeft();
             }
@@ -230,6 +230,12 @@ public class KDTree<T extends IObjectInSystem<T>> {
         return depth;
     }
 
+    /**
+     * Nájdenie najmenšieho uzla v KD strome.
+     * @param root koreň stromu
+     * @param dimension dimenzia
+     * @return najmenší uzol
+     */
     private KDNode<T> findMin(KDNode<T> root, int dimension) {
         KDNode<T> minNode = root;
         Stack<KDNode<T>> stack = new Stack<>();
@@ -248,6 +254,12 @@ public class KDTree<T extends IObjectInSystem<T>> {
         return minNode;
     }
 
+    /**
+     * Nájdenie najväčšieho uzla v KD strome.
+     * @param root koreň stromu
+     * @param dimension dimenzia
+     * @return najväčší uzol
+     */
     private KDNode<T> findMax(KDNode<T> root, int dimension) {
         KDNode<T> maxNode = root;
         Stack<KDNode<T>> stack = new Stack<>();
@@ -313,6 +325,12 @@ public class KDTree<T extends IObjectInSystem<T>> {
         return nodesToReinsert;
     }
 
+    /**
+     * Manuálne odstránenie uzla z KD stromu.
+     * @param node uzol
+     * @param numDimensions počet dimenzií
+     *
+     */
     private void manualRemoveNode(KDNode<T> node, int numDimensions) {
         KDNode<T> current = root;
         KDNode<T> parent = null;
@@ -346,7 +364,7 @@ public class KDTree<T extends IObjectInSystem<T>> {
             }
         }
     }
-
+    
     /**
      * Manuálne vloženie uzla do KD stromu.
      * @param data dáta uzla

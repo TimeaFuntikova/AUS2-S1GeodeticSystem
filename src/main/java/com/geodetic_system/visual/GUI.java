@@ -1,4 +1,9 @@
-package com.geodetic_system;
+package com.geodetic_system.visual;
+
+import com.geodetic_system.GPSPosition;
+import com.geodetic_system.GeodeticObject;
+import com.geodetic_system.KDTree;
+import com.geodetic_system.Parcela;
 
 import javax.swing.*;
 
@@ -130,6 +135,7 @@ public class GUI {
                 GPSPosition topLeft = new GPSPosition('N', topLeftLat, 'E', topLeftLong);
                 GPSPosition bottomRight = new GPSPosition('N', bottomRightLat, 'E', bottomRightLong);
                 Parcela parcela = new Parcela(id, "Parcela " + id, topLeft, bottomRight);
+
 
                 if (kdTree.insert(parcela, POCET_DIMENZII)) {
                     outputArea.append("Parcela inserted: ID " + id + "\n");

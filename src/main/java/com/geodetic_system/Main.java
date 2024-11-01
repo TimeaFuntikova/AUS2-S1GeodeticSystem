@@ -1,5 +1,7 @@
 package com.geodetic_system;
 
+import com.geodetic_system.visual.GUI;
+
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
