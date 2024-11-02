@@ -1,13 +1,12 @@
-package com.geodetic_system;
+package com.geodetic_system.geodeticObjects;
 
 import java.util.Objects;
-
-import static com.geodetic_system.MyComparator.TOLERANCE;
+import static com.geodetic_system.model.MyComparator.TOLERANCE;
 
 public abstract class GeodeticObject implements IObjectInSystem<GeodeticObject> {
     private static long currentId = 0;
     private final long uniqueId;
-    public abstract int getId();
+
     public abstract double getLeftTopX();
     public abstract double getRightBottomX();
     public abstract double getLeftTopY();
@@ -18,6 +17,8 @@ public abstract class GeodeticObject implements IObjectInSystem<GeodeticObject> 
     protected GeodeticObject() {this.uniqueId = generateUniqueId();}
     private synchronized long generateUniqueId() {return currentId++;}
     public long getUniqueId() {return uniqueId;}
+
+    //TODO: referencing Objects
     public GeodeticObject getReferenceObject() {return referenceObject;}
 
     @Override

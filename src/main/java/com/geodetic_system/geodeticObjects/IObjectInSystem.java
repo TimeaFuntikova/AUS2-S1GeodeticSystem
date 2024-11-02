@@ -1,4 +1,4 @@
-package com.geodetic_system;
+package com.geodetic_system.geodeticObjects;
 
 public interface IObjectInSystem<T> {
     int getId(); // supuisne cislo pre property alebo parcelu

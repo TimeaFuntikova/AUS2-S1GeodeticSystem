@@ -1,23 +1,31 @@
-package com.geodetic_system;
+package com.geodetic_system.geodeticObjects;
+
+import com.geodetic_system.model.MyComparator;
+import com.geodetic_system.model.RelatedObjectsManager;
 
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
- * Trieda 'Nehnutelnost' ma svoje unikatne supisne cislo, popis, GPS pozicie, ktore definuju
- * jej ohranicenie a zoznam parciel, na ktorych nehnutelnost stoji.
+ * Trieda 'Parcela' ma svoje unikatne cislo, popis a zoznam nehnutelnosti, ktore sa na nej nachadzaju
+ * a rovnako aj zoznam nehnutelnosti, ktore sa na danej parcele nachadzaju.
  */
-public class Property extends GeodeticObject {
-    private final int propertyNumber;
+public class Parcela extends GeodeticObject {
+    private final int parcelaNumber; //(cislo parcely)
     private final String description;
     private final GPSPosition topLeft; // pozicia parcely
     private final GPSPosition bottomRight; // pozicia parcely
-    private final List<Parcela> relatedObjects; //bude obsahovat iba parcely (IObjectInSystem)
+    private final List<Property> relatedObjects; // bude obsahovat IBA nehnutelnosti (IObjectInSystem == Property)
     private final MyComparator myComparator = new MyComparator();
 
-    public Property(int propertyNumber, String description, GPSPosition topLeft, GPSPosition bottomRight) {
-        this.propertyNumber = propertyNumber;
+    private static final Logger log = Logger.getLogger(Parcela.class.getName());
+
+
+    public Parcela(int parcelaNumber, String description, GPSPosition topLeft, GPSPosition bottomRight) {
+        this.parcelaNumber = parcelaNumber;
         this.description = description;
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
@@ -26,12 +34,26 @@ public class Property extends GeodeticObject {
 
     @Override
     public int getId() {
-        return propertyNumber;
+        return parcelaNumber;
     }
 
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public GPSPosition getTopLeft() {
+        return this.topLeft;
+    }
+
+    public void addRelatedObject(Property obj) {
+       this.relatedObjects.add(obj);
+       log.info("Pridavam nehnutelnost: " + obj.getId() + " na parcelu: " + this.getId());
+    }
+
+    public List<Property> getRelatedProperties() {
+        return this.relatedObjects;
     }
 
     @Override
@@ -42,27 +64,11 @@ public class Property extends GeodeticObject {
     @Override
     public int compareByDimension(GeodeticObject other, int currentDimension) {
         return this.myComparator.compare(this, other, currentDimension);
-
     }
 
     @Override
     public boolean areIntersecting(GeodeticObject a, GeodeticObject b) {
         return RelatedObjectsManager.areIntersecting(a, b);
-
-    }
-
-    @Override
-    public GPSPosition getTopLeft() {
-        return this.topLeft;
-    }
-
-
-    public void addRelatedObject(Parcela obj) {
-        this.relatedObjects.add(obj);
-    }
-
-    public List<Parcela> getRelatedObjects() {
-        return this.relatedObjects;
     }
 
     @Override
@@ -89,8 +95,8 @@ public class Property extends GeodeticObject {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Property property = (Property) o;
-        return this.getUniqueId() == property.getUniqueId();
+        Parcela parcela = (Parcela) o;
+        return this.getUniqueId() == parcela.getUniqueId();
     }
 
     @Override

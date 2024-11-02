@@ -1,4 +1,6 @@
-package com.geodetic_system;
+package com.geodetic_system.model;
+
+import com.geodetic_system.geodeticObjects.GeodeticObject;
 
 public class RelatedObjectsManager {
 

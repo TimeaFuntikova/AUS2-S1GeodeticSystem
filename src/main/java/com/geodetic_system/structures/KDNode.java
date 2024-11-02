@@ -1,4 +1,6 @@
-package com.geodetic_system;
+package com.geodetic_system.structures;
+
+import com.geodetic_system.geodeticObjects.IObjectInSystem;
 
 public class KDNode<T extends IObjectInSystem<T>> {
 

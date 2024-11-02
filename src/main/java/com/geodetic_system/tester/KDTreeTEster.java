@@ -1,4 +1,11 @@
-package com.geodetic_system;
+package com.geodetic_system.tester;
+
+import com.geodetic_system.geodeticObjects.GPSPosition;
+import com.geodetic_system.geodeticObjects.GeodeticObject;
+import com.geodetic_system.geodeticObjects.Parcela;
+import com.geodetic_system.geodeticObjects.Property;
+import com.geodetic_system.structures.KDNode;
+import com.geodetic_system.structures.KDTree;
 
 import java.util.logging.Logger;
 import java.util.ArrayList;
@@ -26,7 +33,7 @@ public class KDTreeTEster {
 
     public static void main(String[] args) {
         KDTreeTEster tester = new KDTreeTEster(12345);
-       tester.generateRandomOperations(POCET_OPERACII, TestCase.PROPERTY);
+        tester.generateRandomOperations(POCET_OPERACII, TestCase.PROPERTY);
         //tester.testOscillationAroundEmptyStructure(TestCase.MIXED, 5000, 100);
     }
 

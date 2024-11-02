@@ -1,5 +1,8 @@
 package com.geodetic_system;
 
+import com.geodetic_system.geodeticObjects.*;
+import com.geodetic_system.model.RelatedObjectsManager;
+import com.geodetic_system.structures.KDTree;
 import com.geodetic_system.visual.GUI;
 
 import java.util.logging.ConsoleHandler;

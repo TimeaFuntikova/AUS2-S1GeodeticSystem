@@ -1,4 +1,6 @@
-package com.geodetic_system;
+package com.geodetic_system.model;
+
+import com.geodetic_system.geodeticObjects.IObjectInSystem;
 
 /**
  * Trieda má za účel porovnať dva vstupné objekty na základe ich kľúča, ktorým je
@@ -13,19 +15,23 @@ public class MyComparator<T extends IObjectInSystem<T>> {
 
     public int compare(T a, T b, int currentDimension) {
         if (currentDimension == 0) {
-            int result = compareWithTolerance(a.getTopLeft().getLatitude(), b.getTopLeft().getLatitude());
+            return compareWithTolerance(a.getTopLeft().getLatitude(), b.getTopLeft().getLatitude());
+            /**
             if (result == 0) {
                 return compareWithTolerance(a.getBottomRight().getLatitude(), b.getBottomRight().getLatitude());
             } else {
                 return result;
             }
+             */
         } else {
-            int result =  compareWithTolerance(a.getTopLeft().getLongitude(), b.getTopLeft().getLongitude());
+            return compareWithTolerance(a.getTopLeft().getLongitude(), b.getTopLeft().getLongitude());
+            /**
             if (result == 0) {
                 return compareWithTolerance(a.getBottomRight().getLongitude(), b.getBottomRight().getLongitude());
             } else {
                 return result;
             }
+                */
         }
     }
 

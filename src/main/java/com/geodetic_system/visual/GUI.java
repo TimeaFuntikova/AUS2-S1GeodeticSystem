@@ -1,15 +1,11 @@
 package com.geodetic_system.visual;
 
-import com.geodetic_system.GPSPosition;
-import com.geodetic_system.GeodeticObject;
-import com.geodetic_system.KDTree;
-import com.geodetic_system.Parcela;
-
+import com.geodetic_system.controller.Controller;
 import javax.swing.*;
 
 public class GUI {
-    private KDTree<GeodeticObject> kdTree = new KDTree<>();
 
+    private Controller controller = new Controller();
     private JTextField userText;
     private JTextField latitudeText;
     private JTextField longitudeText;
@@ -20,8 +16,23 @@ public class GUI {
     private JTextField deleteLatitudeText;
     private JTextField deleteLongitudeText;
     private JTextArea outputArea;
+    private JCheckBox parcelaCheckBox;
+    private JCheckBox nehnutelnostCheckBox;
+    private final String INSERT = "INSERT";
+    private final String FIND = "FIND";
+    private final String DELETE = "DELETE";
+    private final String PARCELA = "PARCELA";
+    private final String PROPERTY = "PROPERTY";
 
     private static final int POCET_DIMENZII = 2;
+
+    /**
+     * Main method
+     * @param args command line arguments
+     */
+    public static void main(String[] args) {
+        new GUI();
+    }
 
     /**
      * Constructor for the GUI
@@ -78,47 +89,56 @@ public class GUI {
         bottomRightLongText.setBounds(245, 80, 75, 25);
         panel.add(bottomRightLongText);
 
+        // Add checkboxes for Parcela and Nehnutelnost
+        parcelaCheckBox = new JCheckBox("Parcela");
+        parcelaCheckBox.setBounds(10, 110, 80, 25);
+        panel.add(parcelaCheckBox);
+
+        nehnutelnostCheckBox = new JCheckBox("Nehnutelnost");
+        nehnutelnostCheckBox.setBounds(100, 110, 120, 25);
+        panel.add(nehnutelnostCheckBox);
+
         JButton insertButton = new JButton("Insert");
-        insertButton.setBounds(10, 110, 150, 25);
+        insertButton.setBounds(10, 140, 150, 25);
         panel.add(insertButton);
 
         JLabel findByLatLongLabel = new JLabel("Find by Top-Left GPS:");
-        findByLatLongLabel.setBounds(10, 150, 150, 25);
+        findByLatLongLabel.setBounds(10, 180, 150, 25);
         panel.add(findByLatLongLabel);
 
         findLatitudeText = new JTextField(10);
-        findLatitudeText.setBounds(160, 150, 75, 25);
+        findLatitudeText.setBounds(160, 180, 75, 25);
         panel.add(findLatitudeText);
 
         findLongitudeText = new JTextField(10);
-        findLongitudeText.setBounds(245, 150, 75, 25);
+        findLongitudeText.setBounds(245, 180, 75, 25);
         panel.add(findLongitudeText);
 
         JButton findButton = new JButton("Find");
-        findButton.setBounds(330, 150, 100, 25);
+        findButton.setBounds(330, 180, 100, 25);
         panel.add(findButton);
 
         JLabel deleteByLatLongLabel = new JLabel("Delete by Top-Left GPS:");
-        deleteByLatLongLabel.setBounds(10, 190, 150, 25);
+        deleteByLatLongLabel.setBounds(10, 220, 150, 25);
         panel.add(deleteByLatLongLabel);
 
         deleteLatitudeText = new JTextField(10);
-        deleteLatitudeText.setBounds(160, 190, 75, 25);
+        deleteLatitudeText.setBounds(160, 220, 75, 25);
         panel.add(deleteLatitudeText);
 
         deleteLongitudeText = new JTextField(10);
-        deleteLongitudeText.setBounds(245, 190, 75, 25);
+        deleteLongitudeText.setBounds(245, 220, 75, 25);
         panel.add(deleteLongitudeText);
 
         JButton deleteButton = new JButton("Delete");
-        deleteButton.setBounds(10, 230, 150, 25);
+        deleteButton.setBounds(10, 260, 150, 25);
         panel.add(deleteButton);
 
         outputArea = new JTextArea();
         outputArea.setEditable(false);
 
         JScrollPane scrollPane = new JScrollPane(outputArea);
-        scrollPane.setBounds(10, 270, 460, 150);
+        scrollPane.setBounds(10, 300, 460, 150);
         panel.add(scrollPane);
 
         /**
@@ -132,15 +152,31 @@ public class GUI {
                 double bottomRightLat = Double.parseDouble(bottomRightLatText.getText());
                 double bottomRightLong = Double.parseDouble(bottomRightLongText.getText());
 
-                GPSPosition topLeft = new GPSPosition('N', topLeftLat, 'E', topLeftLong);
-                GPSPosition bottomRight = new GPSPosition('N', bottomRightLat, 'E', bottomRightLong);
-                Parcela parcela = new Parcela(id, "Parcela " + id, topLeft, bottomRight);
+                GUIObject guiObject = null;
 
+                if (parcelaCheckBox.isSelected()) {
+                    guiObject = new GUIObject(id, PARCELA + id, topLeftLat, topLeftLong, bottomRightLat, bottomRightLong, INSERT, PARCELA);
+                }
+                if (nehnutelnostCheckBox.isSelected()) {
+                    guiObject = new GUIObject(id, PROPERTY + id, topLeftLat, topLeftLong, bottomRightLat, bottomRightLong, INSERT,  PROPERTY);
+                }
 
-                if (kdTree.insert(parcela, POCET_DIMENZII)) {
-                    outputArea.append("Parcela inserted: ID " + id + "\n");
+                if (parcelaCheckBox.isSelected() && nehnutelnostCheckBox.isSelected()) {
+                    int random = (int) (Math.random() * 2);
+                    if (random == 0) {
+                        guiObject = new GUIObject(id, PROPERTY + id, topLeftLat, topLeftLong, bottomRightLat, bottomRightLong, INSERT,  PROPERTY);
+                    } else {
+                        guiObject = new GUIObject(id, PARCELA + id, topLeftLat, topLeftLong, bottomRightLat, bottomRightLong, INSERT,  PARCELA);
+                    }
+                }
+
+                //TODO: vkladanie dvoch objektov - ako sa spravaju a referencuju v strome?
+                if (guiObject != null) {
+                    boolean success = this.controller.tryToProcess(guiObject);
+                    String message = success ? "Object inserted: ID " + id + "\n" : "Insertion failed. Object overlaps with an existing one.\n";
+                    outputArea.append(message);
                 } else {
-                    outputArea.append("Insertion failed. Parcela overlaps with an existing one.\n");
+                    outputArea.append("GUIObject is null.\n");
                 }
 
             } catch (NumberFormatException ex) {
@@ -156,14 +192,25 @@ public class GUI {
                 double latitude = Double.parseDouble(findLatitudeText.getText());
                 double longitude = Double.parseDouble(findLongitudeText.getText());
 
-                GPSPosition searchPosition = new GPSPosition('N', latitude, 'E', longitude);
-                Parcela searchParcela = new Parcela(0, "", searchPosition, searchPosition);
+                GUIObject dummyGuiObject = null;
 
-                Parcela found = (Parcela) kdTree.find(searchParcela, POCET_DIMENZII);
-                if (found != null) {
-                    outputArea.append("Found parcela: " + found.getDescription() + "\n");
-                } else {
-                    outputArea.append("Parcela not found.\n");
+                if (parcelaCheckBox.isSelected()) {
+                    dummyGuiObject = new GUIObject(0, "", latitude, longitude, 0, 0, FIND, PARCELA);
+                }
+                if (nehnutelnostCheckBox.isSelected()) {
+                    dummyGuiObject = new GUIObject(0, "", latitude, longitude, 0, 0, FIND, PROPERTY);
+                }
+
+                    GUIObject returnedFormValidation = this.controller.tryToFindGUIObject(dummyGuiObject);
+                    if (dummyGuiObject.getId() == returnedFormValidation.getId()) {
+                        outputArea.append("Object not found.\n");
+                    } else {
+                        outputArea.append("Object found: ID " + returnedFormValidation.getId() + "\n");
+                        outputArea.append("Description: " + returnedFormValidation.getDescription() + "\n");
+                        outputArea.append("Top-Left GPS: (" + returnedFormValidation.getGPSPositionTopLeftX() + ", " + returnedFormValidation.getGPSPositionTopLeftY() + ")\n");
+                        outputArea.append("Bottom-Right GPS: (" + returnedFormValidation.getGPSPositionBottomRightX() + ", " + returnedFormValidation.getGPSPositionBottomRightY() + ")\n");
+                        //TODO: info about related objects - if any.
+
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(panel, "Invalid input. Please enter valid numbers for Latitude and Longitude.");
@@ -177,21 +224,40 @@ public class GUI {
             try {
                 double deleteTopLeftLat = Double.parseDouble(deleteLatitudeText.getText());
                 double deleteTopLeftLong = Double.parseDouble(deleteLongitudeText.getText());
-                GPSPosition deleteTopLeft = new GPSPosition('N', deleteTopLeftLat, 'E', deleteTopLeftLong);
-                Parcela toDelete = new Parcela(0, "", deleteTopLeft, deleteTopLeft);
 
-                if (kdTree.delete(toDelete, POCET_DIMENZII)) {
-                    outputArea.append("Deleted parcela at Top-Left position: (" + deleteTopLeftLat + ", " + deleteTopLeftLong + ")\n");
-                } else {
-                    outputArea.append("Parcela at Top-Left position: (" + deleteTopLeftLat + ", " + deleteTopLeftLong + ") not found.\n");
+                GUIObject dummyGuiObject = null;
+                boolean canDelete = false;
+
+                if (parcelaCheckBox.isSelected()) {
+                    dummyGuiObject = new GUIObject(0, "", deleteTopLeftLat, deleteTopLeftLong, 0, 0, DELETE, PARCELA);
                 }
+                if (nehnutelnostCheckBox.isSelected()) {
+                    dummyGuiObject = new GUIObject(0, "", deleteTopLeftLat, deleteTopLeftLong, 0, 0, DELETE, PROPERTY);
+                }
+
+                GUIObject returnedFormValidation = this.controller.tryToFindGUIObject(dummyGuiObject);
+                if (dummyGuiObject.getId() == returnedFormValidation.getId()) {
+                    outputArea.append("Object not found.\n");
+                } else {
+                    outputArea.append("Object found: ID " + returnedFormValidation.getId() + "\n");
+                    outputArea.append("Description: " + returnedFormValidation.getDescription() + "\n");
+                    outputArea.append("Top-Left GPS: (" + returnedFormValidation.getGPSPositionTopLeftX() + ", " + returnedFormValidation.getGPSPositionTopLeftY() + ")\n");
+                    outputArea.append("Bottom-Right GPS: (" + returnedFormValidation.getGPSPositionBottomRightX() + ", " + returnedFormValidation.getGPSPositionBottomRightY() + ")\n");
+                    //TODO: info about related objects - if any.
+
+                    canDelete = true;
+                }
+
+                if (canDelete) {
+                    boolean success = this.controller.tryToProcess(returnedFormValidation);
+                    String message = success ? "Object deleted: ID " + returnedFormValidation.getId() + "\n" : "Deletion failed. Object not found.\n";
+                    outputArea.append(message);
+                }
+
+
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(panel, "Invalid input. Please enter valid numbers for Latitude and Longitude.");
             }
         });
-    }
-
-    public static void main(String[] args) {
-        new GUI();
     }
 }

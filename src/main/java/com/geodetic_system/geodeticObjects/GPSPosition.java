@@ -1,4 +1,4 @@
-package com.geodetic_system;
+package com.geodetic_system.geodeticObjects;
 
 /**
  * Trieda 'GPSPozicia' obsahuje udaje  šírke/pozícii šírky a dlzke/pozicii dlzky.

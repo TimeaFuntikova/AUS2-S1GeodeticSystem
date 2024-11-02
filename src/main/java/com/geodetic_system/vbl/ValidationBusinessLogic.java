@@ -1,16 +1,16 @@
 package com.geodetic_system.vbl;
 
-import com.geodetic_system.GeodeticObject;
-import com.geodetic_system.Parcela;
-import com.geodetic_system.Property;
+import com.geodetic_system.geodeticObjects.GeodeticObject;
+import com.geodetic_system.geodeticObjects.Parcela;
+import com.geodetic_system.geodeticObjects.Property;
 import com.geodetic_system.model.Model;
 import com.geodetic_system.visual.GUIObject;
 
 public class ValidationBusinessLogic {
-    private final Model model = new Model();
+    private final Model model;
 
     public ValidationBusinessLogic() {
-        //intentionally empty
+        this.model = new Model();
     }
 
     public boolean checkAndTryToInsert(GUIObject guiObject) {

@@ -1,6 +1,10 @@
 package com.geodetic_system.model;
 
-import com.geodetic_system.*;
+import com.geodetic_system.geodeticObjects.GPSPosition;
+import com.geodetic_system.geodeticObjects.GeodeticObject;
+import com.geodetic_system.geodeticObjects.Parcela;
+import com.geodetic_system.geodeticObjects.Property;
+import com.geodetic_system.structures.KDTree;
 import com.geodetic_system.visual.GUIObject;
 
 /**
@@ -11,12 +15,14 @@ import com.geodetic_system.visual.GUIObject;
  */
 public class Model  {
 
+
     private final KDTree<GeodeticObject> kdTree = new KDTree<>();
     private final int POCET_DIMENZII = 2;
 
     public Model() {
-        // intentionally empty
+    //emtpy constructor
     }
+
 
     public GeodeticObject createGeodeticObject(GUIObject guiObject) {
         return switch (guiObject.getObjectToAssign()) {
