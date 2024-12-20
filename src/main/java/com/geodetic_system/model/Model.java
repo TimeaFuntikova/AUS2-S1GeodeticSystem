@@ -4,8 +4,11 @@ import com.geodetic_system.geodeticObjects.GPSPosition;
 import com.geodetic_system.geodeticObjects.GeodeticObject;
 import com.geodetic_system.geodeticObjects.Parcela;
 import com.geodetic_system.geodeticObjects.Property;
+import com.geodetic_system.structures.KDNode;
 import com.geodetic_system.structures.KDTree;
 import com.geodetic_system.visual.GUIObject;
+
+import java.util.List;
 
 /**
  * Model class for the Geodetic System application that is responsible for creating GeodeticObjects
@@ -49,8 +52,8 @@ public class Model  {
      * @param geodeticObject the object to find
      * @return the found GeodeticObject
      */
-    public GeodeticObject findGeodeticObject(GeodeticObject geodeticObject) {
-        return this.kdTree.find(geodeticObject, POCET_DIMENZII);
+    public List<KDNode<GeodeticObject>> findGeodeticObject(GeodeticObject geodeticObject) {
+        return this.kdTree.find(geodeticObject);
     }
 
     /**

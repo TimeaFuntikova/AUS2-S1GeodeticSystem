@@ -22,13 +22,16 @@ public abstract class GeodeticObject implements IObjectInSystem<GeodeticObject> 
     public GeodeticObject getReferenceObject() {return referenceObject;}
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GeodeticObject that = (GeodeticObject) o;
+    public boolean equalsData(GeodeticObject target) {
+        if (this == target) return true;
+        if (target == null || getClass() != target.getClass()) return false;
+
+        GeodeticObject that = target;
 
         return Math.abs(this.getLeftTopX() - that.getLeftTopX()) < TOLERANCE &&
-                Math.abs(this.getLeftTopY() - that.getLeftTopY()) < TOLERANCE;
+                Math.abs(this.getLeftTopY() - that.getLeftTopY()) < TOLERANCE &&
+                Math.abs(this.getRightBottomX() - that.getRightBottomX()) < TOLERANCE &&
+                Math.abs(this.getRightBottomY() - that.getRightBottomY()) < TOLERANCE;
     }
 
     @Override

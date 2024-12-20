@@ -6,5 +6,7 @@ public interface IObjectInSystem<T> {
     GPSPosition getTopLeft();
     GPSPosition getBottomRight();
     int compareByDimension(T other, int currentDimension);
+    int compareForFind(T current, T other);
+    boolean equalsData(T other);
     boolean areIntersecting(T a, T b);
 }

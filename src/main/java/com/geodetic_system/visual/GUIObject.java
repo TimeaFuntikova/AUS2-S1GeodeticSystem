@@ -74,4 +74,13 @@ public class GUIObject {
     public void setOperationType(String operationType) {
         this.operationType = operationType;
     }
+
+    @Override
+    public String toString() {
+        return "ID: " + getId() +
+                ", Type: " + getObjectToAssign() +
+                ", Top-Left: (" + getGPSPositionTopLeftX() + ", " + getGPSPositionTopLeftY() + ")" +
+                ", Bottom-Right: (" + getGPSPositionBottomRightX() + ", " + getGPSPositionBottomRightY() + ")";
+    }
+
 }

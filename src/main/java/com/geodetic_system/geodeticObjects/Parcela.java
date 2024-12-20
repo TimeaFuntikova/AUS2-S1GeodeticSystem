@@ -67,37 +67,35 @@ public class Parcela extends GeodeticObject {
     }
 
     @Override
+    public int compareForFind(GeodeticObject current, GeodeticObject other) {
+        return this.myComparator.compareForFind(current, other);
+    }
+
+    @Override
     public boolean areIntersecting(GeodeticObject a, GeodeticObject b) {
         return RelatedObjectsManager.areIntersecting(a, b);
     }
 
     @Override
     public double getLeftTopX() {
-        return this.topLeft.getLongitude();
-    }
-
-    @Override
-    public double getLeftTopY() {
         return this.topLeft.getLatitude();
     }
 
     @Override
-    public double getRightBottomX() {
-        return this.bottomRight.getLongitude();
+    public double getLeftTopY() {
+        return this.topLeft.getLongitude();
     }
 
     @Override
-    public double getRightBottomY() {
+    public double getRightBottomX() {
         return this.bottomRight.getLatitude();
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Parcela parcela = (Parcela) o;
-        return this.getUniqueId() == parcela.getUniqueId();
+    public double getRightBottomY() {
+        return this.bottomRight.getLongitude();
     }
+
 
     @Override
     public int hashCode() {

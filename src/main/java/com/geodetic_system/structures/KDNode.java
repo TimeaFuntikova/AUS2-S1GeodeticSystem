@@ -2,6 +2,10 @@ package com.geodetic_system.structures;
 
 import com.geodetic_system.geodeticObjects.IObjectInSystem;
 
+/**
+ * Trieda 'KDNode' reprezentuje uzol v strome.
+ * @param <T> typ objektu, ktory je ulozeny v uzle
+ */
 public class KDNode<T extends IObjectInSystem<T>> {
 
     private T data;
@@ -14,6 +18,12 @@ public class KDNode<T extends IObjectInSystem<T>> {
         this.left = null;
         this.right = null;
         this.parent = null;
+    }
+
+    public KDNode(T data, KDNode<T> left, KDNode<T> right) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
     }
 
     public T getData() {

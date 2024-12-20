@@ -32,7 +32,7 @@ public class KDTreeTEster {
     }
 
     public static void main(String[] args) {
-        KDTreeTEster tester = new KDTreeTEster(12345);
+        KDTreeTEster tester = new KDTreeTEster(47);
         tester.generateRandomOperations(POCET_OPERACII, TestCase.PROPERTY);
         //tester.testOscillationAroundEmptyStructure(TestCase.MIXED, 5000, 100);
     }
@@ -161,7 +161,7 @@ public class KDTreeTEster {
         KDTree<GeodeticObject> targetTree = getTargetTree(randomObject, type);
 
         if (targetTree != null) {
-            found = targetTree.find(randomObject, 2) != null;
+            found = targetTree.find(randomObject) != null;
         }
 
         log.info((randomObject instanceof Parcela ? "Parcela" : "Property") + " with ID: "
@@ -175,7 +175,7 @@ public class KDTreeTEster {
         }
 
         GeodeticObject randomObject = listForValidation.get(random.nextInt(listForValidation.size()));
-        boolean deleted = false;
+        boolean deleted;
         KDTree<GeodeticObject> targetTree = getTargetTree(randomObject, type);
 
         if (targetTree != null) {
@@ -183,6 +183,7 @@ public class KDTreeTEster {
                     randomObject instanceof Parcela ? "Parcela" : "Property",
                     randomObject.getId(), randomObject.getTopLeft(), randomObject.getBottomRight()));
 
+            // Attempt to delete the object from the KD-Tree
             deleted = targetTree.delete(randomObject, 2);
 
             if (deleted) {
@@ -196,6 +197,11 @@ public class KDTreeTEster {
                 } else {
                     log.info("Successfully removed from the reference list.");
                 }
+
+                // Print the structure of the KD-Tree after successful deletion
+                log.info("KD-Tree Structure after deletion of ID " + randomObject.getId() + ":");
+                targetTree.printTreeStructure(); // Call printTreeStructure() to display the KD-Tree structure
+
             } else {
                 log.warning("Deletion failed in KDTree.");
             }
@@ -203,11 +209,13 @@ public class KDTreeTEster {
             log.warning("Target tree is null.");
         }
 
+        // Log the current state of the reference list
         log.info("Current Reference List State: " + listForValidation.stream()
                 .map(obj -> String.format("ID: %d, TopLeft: %s, BottomRight: %s",
                         obj.getId(), obj.getTopLeft(), obj.getBottomRight()))
                 .collect(Collectors.joining(", ")));
     }
+
 
     private boolean areObjectsEqual(GeodeticObject obj1, GeodeticObject obj2) {
         if (obj1 == null || obj2 == null) return false;
@@ -224,6 +232,7 @@ public class KDTreeTEster {
         return null;
     }
 
+    //TODO: nastavoit toto iba raz
     private boolean validateStructure(TestCase type) {
         int treeSize;
         if (type == TestCase.MIXED) {
@@ -268,6 +277,7 @@ public class KDTreeTEster {
         if (node == null) return 0;
         return 1 + getTreeSize(node.getLeft()) + getTreeSize(node.getRight());
     }
+
 
     public void testOscillationAroundEmptyStructure(TestCase type, int cycles, int maxInsertsPerCycle) {
         log.info("Starting oscillation test around empty structure with " + cycles + " cycles.");
